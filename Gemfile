@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'barrister'
 gem 'sinatra'
-gem 'pry'
+gem 'redis'
+gem 'bunny'

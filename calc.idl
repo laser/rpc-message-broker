@@ -1,7 +1,0 @@
-interface Calculator {
-    // Adds two numbers together and returns the result
-    add(a float, b float) float
-
-    // Subtracts b from a and returns the result
-    subtract(a float, b float) float
-}
