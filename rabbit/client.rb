@@ -18,22 +18,25 @@ req_message = {
   'params' => [1, 5.1]
 }
 
-# send out our request, serialized as JSON
-x.publish(JSON.generate(req_message), {
-  routing_key: q.name,
-  reply_to: req_message['id']
-})
-
 # we'll set this in the block passed to subscribe below
 response = nil
 
-# create a temporary return queue (idempotent operation)
-reply_q = ch.queue(req_message['id'], auto_delete: true)
+# create a return queue for this client
+reply_q = ch.queue('', exclusive: true)
+
+# send out our request, serialized as JSON
+x.publish(JSON.generate(req_message), {
+  correlation_id: req_message['id'],
+  reply_to: reply_q.name,
+  routing_key: q.name
+})
 
 # subscribe to the return queue in a blocking fashion
 reply_q.subscribe(block: true) do |delivery_info, properties, payload|
-  response = payload            # visible via closure
-  delivery_info.consumer.cancel # unblock the consumer
+  if properties[:correlation_id] == req_message['id']
+    response = payload            # visible via closure
+    delivery_info.consumer.cancel # unblock the consumer
+  end
 end
 
 # print it out to the console

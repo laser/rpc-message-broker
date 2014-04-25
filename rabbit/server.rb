@@ -19,7 +19,7 @@ calculator = Calculator.new
 conn = Bunny.new
 conn.start
 ch = conn.create_channel
-q  = ch.queue('calc', auto_delete: false)
+q  = ch.queue('calc')
 x  = ch.default_exchange
 
 q.subscribe(block: true) do |delivery_info, properties, payload|
@@ -34,9 +34,6 @@ q.subscribe(block: true) do |delivery_info, properties, payload|
     'jsonrpc' => '2.0'
   }
 
-  # create our self-destructing return queue
-  reply_q = ch.queue(req_message['id'], auto_delete: true)
-
   # enqueue our reply in the return queue
-  x.publish(JSON.generate(reply), routing_key: reply_q.name)
+  x.publish(JSON.generate(reply), routing_key: properties.reply_to, correlation_id: properties.correlation_id)
 end
