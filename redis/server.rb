@@ -34,4 +34,7 @@ while true
 
   # 'respond' by inserting our reply at the tail of a 'reply'-list
   redis_client.rpush(req_message['id'], reply)
+
+  # set an expire value to make sure we don't leak
+  redis_client.expire(req_message['id'], 30)
 end
