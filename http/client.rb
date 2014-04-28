@@ -5,6 +5,7 @@ require 'json'
 
 uri = URI('http://localhost:4567/calc')
 req = Net::HTTP::Post.new uri.path
+
 req.body = {
   'id' => SecureRandom.hex,
   'jsonrpc' => '2.0',
