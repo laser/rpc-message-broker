@@ -33,8 +33,8 @@ while true
   })
 
   # 'respond' by inserting our reply at the tail of a 'reply'-list
-  redis_client.rpush(req_message['id'], reply)
+  redis_client.rpush(req_message['reply_to'], reply)
 
   # set an expire value to make sure we don't leak
-  redis_client.expire(req_message['id'], 30)
+  redis_client.expire(req_message['reply_to'], 30)
 end
