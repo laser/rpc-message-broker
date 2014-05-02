@@ -33,10 +33,8 @@ x.publish(JSON.generate(req_message), {
 
 # subscribe to the return queue in a blocking fashion
 reply_q.subscribe(block: true) do |delivery_info, properties, payload|
-  if properties[:correlation_id] == req_message['id']
-    response = payload            # visible via closure
-    delivery_info.consumer.cancel # unblock the consumer
-  end
+  response = payload            # visible via closure
+  delivery_info.consumer.cancel # unblock the consumer
 end
 
 # print it out to the console
